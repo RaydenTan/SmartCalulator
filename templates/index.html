@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Calculator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: white;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .calculator {
+            max-width: 650px;
+            margin: auto;
+            background: #1f2937;
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        h1 {
+            color: #60a5fa;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 14px;
+            font-size: 17px;
+            border-radius: 8px;
+            border: 1px solid #4b5563;
+            margin: 12px 0;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .result {
+            background: #374151;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <h1>🧮 Smart Calculator</h1>
+
+        <p>
+            Solve arithmetic, algebra, calculus,
+            matrices and statistics.
+        </p>
+
+        <form method="POST">
+            <input
+                type="text"
+                name="expression"
+                placeholder="Example: 4x = 16"
+                value="{{ expression }}"
+                required
+            >
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                <strong>Answer:</strong>
+                <p>{{ result }}</p>
+            </div>
+        {% endif %}
+
+        <h3>Try these examples</h3>
+        <ul>
+            <li>12 + 8 * 4</li>
+            <li>4x = 16</li>
+            <li>diff(x^3, x)</li>
+            <li>mean(2, 4, 6, 8)</li>
+            <li>det([[1, 2], [3, 4]])</li>
+        </ul>
+    </div>
+</body>
+</html>
