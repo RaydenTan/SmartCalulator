@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,10 +20,33 @@
             background: #1f2937;
             padding: 30px;
             border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         h1 {
             color: #60a5fa;
+            margin: 0;
+        }
+
+        .btn-guide {
+            background: #4b5563;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-guide:hover {
+            background: #6b7280;
         }
 
         input {
@@ -34,10 +56,12 @@
             font-size: 17px;
             border-radius: 8px;
             border: 1px solid #4b5563;
-            margin: 12px 0;
+            margin: 16px 0 12px 0;
+            background: #111827;
+            color: white;
         }
 
-        button {
+        button[type="submit"] {
             padding: 12px 20px;
             background: #3b82f6;
             color: white;
@@ -45,6 +69,12 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background: #2563eb;
         }
 
         .result {
@@ -54,18 +84,91 @@
             margin-top: 20px;
             overflow-wrap: anywhere;
             white-space: pre-wrap;
+            border-left: 4px solid #60a5fa;
+        }
+
+        /* MODAL STYLES FOR DETAILED GUIDE */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #1f2937;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 16px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #374151;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #374151;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .close-btn {
+            color: #9ca3af;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .guide-section {
+            margin-bottom: 18px;
+            background: #2d3748;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .guide-section h4 {
+            margin: 0 0 6px 0;
+            color: #60a5fa;
+        }
+
+        .guide-section ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #111827;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f3f4f6;
+            font-family: monospace;
         }
     </style>
 </head>
 
 <body>
     <div class="calculator">
-        <h1>🧮 Smart Calculator</h1>
+        <div class="header-actions">
+            <h1>🧮 Smart Calculator</h1>
+            <button class="btn-guide" onclick="openGuide()">📖 How to Use</button>
+        </div>
 
-        <p>
-            Solve arithmetic, algebra, calculus,
-            matrices and statistics.
-        </p>
+        <p>Solve arithmetic, algebra, calculus, matrices and statistics.</p>
 
         <form method="POST">
             <input
@@ -88,12 +191,93 @@
 
         <h3>Try these examples</h3>
         <ul>
-            <li>12 + 8 * 4</li>
-            <li>4x = 16</li>
-            <li>diff(x^3, x)</li>
-            <li>mean(2, 4, 6, 8)</li>
-            <li>det([[1, 2], [3, 4]])</li>
+            <li><code>12 + 8 * 4</code></li>
+            <li><code>4x = 16</code></li>
+            <li><code>diff(x^3, x)</code></li>
+            <li><code>mean(2, 4, 6, 8)</code></li>
+            <li><code>det([[4, 5], [6, 7]])</code></li>
         </ul>
     </div>
+
+    <!-- POPUP MODAL GUIDE -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: #60a5fa;">📖 How to Use Smart Calculator</h2>
+                <span class="close-btn" onclick="closeGuide()">&times;</span>
+            </div>
+
+            <div class="guide-section">
+                <h4>1. Basic Calculations & Implicit Multiplication</h4>
+                <ul>
+                    <li>Standard arithmetic: <code>12 + 8 * (10 - 2) / 4</code> [2]</li>
+                    <li>Implicit typing: <code>4x = 16</code> or <code>8(x + 2) = 32</code> [2, 8]</li>
+                    <li>Exponents: <code>5²</code> or <code>2^4</code> [2, 9]</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>2. Trigonometry</h4>
+                <ul>
+                    <li>Trig Functions: <code>sin(30)</code>, <code>cos(60)</code>, <code>tan(45)</code> [2]</li>
+                    <li>Inverse Trig: <code>asin(0.5)</code>, <code>acos(0.5)</code>, <code>atan(1)</code> [2]</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>3. Algebra Solver (SymPy)</h4>
+                <ul>
+                    <li>Single Equations: <code>x^2 = 4</code> [2, 10]</li>
+                    <li>Systems of Equations: <code>2x + y = 5, x - y = 1</code> [2, 10]</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>4. Calculus (SymPy Engine)</h4>
+                <ul>
+                    <li>Derivatives: <code>diff(x^3 + sin(x), x)</code> [2, 11, 12]</li>
+                    <li>Indefinite Integrals: <code>integrate(x^2, x)</code> [2, 11, 13]</li>
+                    <li>Definite Integrals: <code>integrate(x^3 + sin(x), (x, 0, 1))</code> [2, 14]</li>
+                    <li>Limits: <code>limit(sin(x)/x, x, 0)</code> [2, 15]</li>
+                    <li>Taylor Series: <code>series(exp(x), x, 0, 4)</code> [2, 16]</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>5. Matrix Algebra</h4>
+                <ul>
+                    <li>Determinant: <code>det([[4, 5], [6, 7]])</code> [2, 17]</li>
+                    <li>Inverse Matrix: <code>inv([[4, 5], [6, 7]])</code> [2, 17]</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>6. Statistics</h4>
+                <ul>
+                    <li>Mean / Average: <code>mean(2, 4, 6, 8)</code> [2, 18]</li>
+                    <li>Median: <code>median(1, 3, 5, 7, 9)</code> [2, 18]</li>
+                    <li>Standard Deviation: <code>stdev(2, 4, 4, 5, 7, 9)</code> [2, 18]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openGuide() {
+            document.getElementById("guideModal").style.display = "block";
+        }
+
+        function closeGuide() {
+            document.getElementById("guideModal").style.display = "none";
+        }
+
+        // Close guide if user clicks outside the modal box
+        window.onclick = function(event) {
+            var modal = document.getElementById("guideModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
