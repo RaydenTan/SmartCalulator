@@ -15,7 +15,7 @@
         }
 
         .calculator {
-            max-width: 600px;
+            max-width: 620px;
             margin: auto;
             background: #1f2937;
             padding: 25px;
@@ -50,7 +50,7 @@
             background: #6b7280;
         }
 
-        /* DISPLAY INPUT */
+        /* INPUT DISPLAY */
         #expression-input {
             box-sizing: border-box;
             width: 100%;
@@ -58,11 +58,44 @@
             font-size: 20px;
             border-radius: 8px;
             border: 1px solid #4b5563;
-            margin: 16px 0 12px 0;
+            margin: 16px 0 16px 0;
             background: #111827;
             color: #60a5fa;
             font-weight: bold;
             letter-spacing: 0.5px;
+        }
+
+        /* MODE SELECTION TABS */
+        .mode-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #374151;
+            color: #9ca3af;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
         }
 
         /* KEYPAD GRID LAYOUT */
@@ -74,8 +107,8 @@
         }
 
         .btn-key {
-            padding: 12px;
-            font-size: 16px;
+            padding: 12px 6px;
+            font-size: 15px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
@@ -89,31 +122,15 @@
             background: #4b5563;
         }
 
-        /* Specialized Button Colors */
-        .btn-op {
-            background: #2563eb;
-            color: white;
-        }
-        .btn-op:hover {
-            background: #1d4ed8;
-        }
+        /* Specialized Button Styles */
+        .btn-op { background: #2563eb; }
+        .btn-op:hover { background: #1d4ed8; }
 
-        .btn-fn {
-            background: #0d9488;
-            color: white;
-            font-size: 14px;
-        }
-        .btn-fn:hover {
-            background: #0f766e;
-        }
+        .btn-fn { background: #0d9488; font-size: 13px; }
+        .btn-fn:hover { background: #0f766e; }
 
-        .btn-clear {
-            background: #dc2626;
-            color: white;
-        }
-        .btn-clear:hover {
-            background: #b91c1c;
-        }
+        .btn-clear { background: #dc2626; }
+        .btn-clear:hover { background: #b91c1c; }
 
         .btn-calc {
             grid-column: span 5;
@@ -125,13 +142,11 @@
             cursor: pointer;
             font-size: 18px;
             font-weight: bold;
-            margin-top: 4px;
+            margin-top: 6px;
             transition: background 0.2s;
         }
 
-        .btn-calc:hover {
-            background: #059669;
-        }
+        .btn-calc:hover { background: #059669; }
 
         .result {
             background: #374151;
@@ -148,10 +163,8 @@
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(4px);
         }
@@ -183,9 +196,7 @@
             cursor: pointer;
         }
 
-        .close-btn:hover {
-            color: white;
-        }
+        .close-btn:hover { color: white; }
 
         .guide-section {
             margin-bottom: 15px;
@@ -194,25 +205,9 @@
             border-radius: 8px;
         }
 
-        .guide-section h4 {
-            margin: 0 0 6px 0;
-            color: #60a5fa;
-        }
-
-        .guide-section ul {
-            margin: 0;
-            padding-left: 20px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        code {
-            background: #111827;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #f3f4f6;
-            font-family: monospace;
-        }
+        .guide-section h4 { margin: 0 0 6px 0; color: #60a5fa; }
+        .guide-section ul { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+        code { background: #111827; padding: 2px 6px; border-radius: 4px; color: #f3f4f6; font-family: monospace; }
     </style>
 </head>
 
@@ -223,68 +218,174 @@
             <button class="btn-guide" onclick="openGuide()">📖 How to Use</button>
         </div>
 
-        <p style="font-size: 14px; color: #9ca3af; margin-top: 6px;">
-            Type directly or use the buttons below:
-        </p>
-
         <form method="POST">
-            <!-- INPUT FIELD (Keyboard Typing Allowed) -->
+            <!-- INPUT FIELD -->
             <input
                 type="text"
                 id="expression-input"
                 name="expression"
-                placeholder="Example: sqrt(16) or 4x = 16"
+                placeholder="Select a mode or type here..."
                 value="{{ expression }}"
                 required
                 autocomplete="off"
             >
 
-            <!-- CLICKABLE BUTTON KEYPAD -->
-            <div class="keypad">
-                <!-- Row 1: Actions & Functions -->
+            <!-- MODE SWITCHER TABS -->
+            <div class="mode-tabs">
+                <button type="button" class="tab-btn active" onclick="switchMode('normal', this)">Normal</button>
+                <button type="button" class="tab-btn" onclick="switchMode('algebra', this)">Algebra</button>
+                <button type="button" class="tab-btn" onclick="switchMode('calculus', this)">Calculus</button>
+                <button type="button" class="tab-btn" onclick="switchMode('matrix', this)">Matrix</button>
+                <button type="button" class="tab-btn" onclick="switchMode('statistics', this)">Statistics</button>
+            </div>
+
+            <!-- 1. NORMAL MODE KEYPAD -->
+            <div class="keypad" id="keypad-normal">
                 <button type="button" class="btn-key btn-clear" onclick="clearInput()">C</button>
                 <button type="button" class="btn-key btn-clear" onclick="backspace()">⌫</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('sqrt(')">√ (sqrt)</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('cbrt(')">∛ (cbrt)</button>
-                <button type="button" class="btn-key btn-op" onclick="appendValue('^')">xʸ (^)</button>
-
-                <!-- Row 2: Brackets & Trigonometry -->
                 <button type="button" class="btn-key" onclick="appendValue('(')">(</button>
                 <button type="button" class="btn-key" onclick="appendValue(')')">)</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('sin(')">sin</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('cos(')">cos</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('tan(')">tan</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('^')">^</button>
 
-                <!-- Row 3: Numbers & Operators -->
                 <button type="button" class="btn-key" onclick="appendValue('7')">7</button>
                 <button type="button" class="btn-key" onclick="appendValue('8')">8</button>
                 <button type="button" class="btn-key" onclick="appendValue('9')">9</button>
                 <button type="button" class="btn-key btn-op" onclick="appendValue('/')">÷</button>
                 <button type="button" class="btn-key btn-op" onclick="appendValue('*')">×</button>
 
-                <!-- Row 4: Numbers & Operators -->
                 <button type="button" class="btn-key" onclick="appendValue('4')">4</button>
                 <button type="button" class="btn-key" onclick="appendValue('5')">5</button>
                 <button type="button" class="btn-key" onclick="appendValue('6')">6</button>
                 <button type="button" class="btn-key btn-op" onclick="appendValue('-')">-</button>
                 <button type="button" class="btn-key btn-op" onclick="appendValue('+')">+</button>
 
-                <!-- Row 5: Numbers, Symbols, Variables -->
                 <button type="button" class="btn-key" onclick="appendValue('1')">1</button>
                 <button type="button" class="btn-key" onclick="appendValue('2')">2</button>
                 <button type="button" class="btn-key" onclick="appendValue('3')">3</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('x')">x</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('y')">y</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('sqrt(')">√</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('cbrt(')">∛</button>
 
-                <!-- Row 6: Zero, Decimal, Equals -->
                 <button type="button" class="btn-key" onclick="appendValue('0')" style="grid-column: span 2;">0</button>
                 <button type="button" class="btn-key" onclick="appendValue('.')">.</button>
-                <button type="button" class="btn-key btn-op" onclick="appendValue(' = ')">=</button>
-                <button type="button" class="btn-key btn-fn" onclick="appendValue('diff(')">diff</button>
-
-                <!-- CALCULATE SUBMIT BUTTON -->
-                <button type="submit" class="btn-calc">Calculate</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('sin(')">sin</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('cos(')">cos</button>
             </div>
+
+            <!-- 2. ALGEBRA MODE KEYPAD -->
+            <div class="keypad" id="keypad-algebra" style="display: none;">
+                <button type="button" class="btn-key btn-clear" onclick="clearInput()">C</button>
+                <button type="button" class="btn-key btn-clear" onclick="backspace()">⌫</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('x')">x</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('y')">y</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue(' = ')">=</button>
+
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('sqrt(')">sqrt</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('cbrt(')">cbrt</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('^')">^</button>
+                <button type="button" class="btn-key" onclick="appendValue('(')">(</button>
+                <button type="button" class="btn-key" onclick="appendValue(')')">)</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('7')">7</button>
+                <button type="button" class="btn-key" onclick="appendValue('8')">8</button>
+                <button type="button" class="btn-key" onclick="appendValue('9')">9</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('+')">+</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('-')">-</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('4')">4</button>
+                <button type="button" class="btn-key" onclick="appendValue('5')">5</button>
+                <button type="button" class="btn-key" onclick="appendValue('6')">6</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('*')">×</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('/')">÷</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('1')">1</button>
+                <button type="button" class="btn-key" onclick="appendValue('2')">2</button>
+                <button type="button" class="btn-key" onclick="appendValue('3')">3</button>
+                <button type="button" class="btn-key" onclick="appendValue('0')">0</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue(', ')">,</button>
+            </div>
+
+            <!-- 3. CALCULUS MODE KEYPAD -->
+            <div class="keypad" id="keypad-calculus" style="display: none;">
+                <button type="button" class="btn-key btn-clear" onclick="clearInput()">C</button>
+                <button type="button" class="btn-key btn-clear" onclick="backspace()">⌫</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('diff(')">diff</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('integrate(')">integrate</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('limit(')">limit</button>
+
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('series(')">series</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('x')">x</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('^')">^</button>
+                <button type="button" class="btn-key" onclick="appendValue('(')">(</button>
+                <button type="button" class="btn-key" onclick="appendValue(')')">)</button>
+
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('sin(')">sin</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('cos(')">cos</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('exp(')">exp</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue(', ')">,</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('+')">+</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('1')">1</button>
+                <button type="button" class="btn-key" onclick="appendValue('2')">2</button>
+                <button type="button" class="btn-key" onclick="appendValue('3')">3</button>
+                <button type="button" class="btn-key" onclick="appendValue('0')">0</button>
+                <button type="button" class="btn-key btn-op" onclick="appendValue('-')">-</button>
+            </div>
+
+            <!-- 4. MATRIX MODE KEYPAD -->
+            <div class="keypad" id="keypad-matrix" style="display: none;">
+                <button type="button" class="btn-key btn-clear" onclick="clearInput()">C</button>
+                <button type="button" class="btn-key btn-clear" onclick="backspace()">⌫</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('det(')">det</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('inv(')">inv</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('[,]')">matrix</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('[')">[</button>
+                <button type="button" class="btn-key" onclick="appendValue(']')">]</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue(', ')">,</button>
+                <button type="button" class="btn-key" onclick="appendValue('(')">(</button>
+                <button type="button" class="btn-key" onclick="appendValue(')')">)</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('1')">1</button>
+                <button type="button" class="btn-key" onclick="appendValue('2')">2</button>
+                <button type="button" class="btn-key" onclick="appendValue('3')">3</button>
+                <button type="button" class="btn-key" onclick="appendValue('4')">4</button>
+                <button type="button" class="btn-key" onclick="appendValue('5')">5</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('6')">6</button>
+                <button type="button" class="btn-key" onclick="appendValue('7')">7</button>
+                <button type="button" class="btn-key" onclick="appendValue('8')">8</button>
+                <button type="button" class="btn-key" onclick="appendValue('9')">9</button>
+                <button type="button" class="btn-key" onclick="appendValue('0')">0</button>
+            </div>
+
+            <!-- 5. STATISTICS MODE KEYPAD -->
+            <div class="keypad" id="keypad-statistics" style="display: none;">
+                <button type="button" class="btn-key btn-clear" onclick="clearInput()">C</button>
+                <button type="button" class="btn-key btn-clear" onclick="backspace()">⌫</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('mean(')">mean</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('median(')">median</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue('mode(')">mode</button>
+
+                <button type="button" class="btn-key btn-fn" style="grid-column: span 2;" onclick="appendValue('stdev(')">stdev</button>
+                <button type="button" class="btn-key btn-fn" onclick="appendValue(', ')">,</button>
+                <button type="button" class="btn-key" onclick="appendValue('(')">(</button>
+                <button type="button" class="btn-key" onclick="appendValue(')')">)</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('7')">7</button>
+                <button type="button" class="btn-key" onclick="appendValue('8')">8</button>
+                <button type="button" class="btn-key" onclick="appendValue('9')">9</button>
+                <button type="button" class="btn-key" onclick="appendValue('4')">4</button>
+                <button type="button" class="btn-key" onclick="appendValue('5')">5</button>
+
+                <button type="button" class="btn-key" onclick="appendValue('6')">6</button>
+                <button type="button" class="btn-key" onclick="appendValue('1')">1</button>
+                <button type="button" class="btn-key" onclick="appendValue('2')">2</button>
+                <button type="button" class="btn-key" onclick="appendValue('3')">3</button>
+                <button type="button" class="btn-key" onclick="appendValue('0')">0</button>
+            </div>
+
+            <!-- CALCULATE SUBMIT BUTTON -->
+            <button type="submit" class="btn-calc">Calculate</button>
         </form>
 
         {% if result %}
@@ -306,34 +407,75 @@
             <div class="guide-section">
                 <h4>1. Basic Calculations & Roots</h4>
                 <ul>
-                    <li>Roots: <code>sqrt(16)</code> -> 4 or <code>cbrt(27)</code> -> 3</li>
                     <li>Standard Math: <code>12 + 8 * (10 - 2) / 4</code></li>
-                    <li>Implicit Typing: <code>4x = 16</code> or <code>8(x + 2) = 32</code></li>
+                    <li>Roots: <code>sqrt(16)</code> or <code>cbrt(27)</code></li>
+                    <li>Powers / Exponents: <code>5²</code> or <code>2^4</code></li>
                 </ul>
             </div>
 
             <div class="guide-section">
-                <h4>2. Algebra & Calculus</h4>
+                <h4>2. Trigonometry</h4>
                 <ul>
-                    <li>Algebra Equations: <code>x^2 = 4</code> or <code>2x + y = 5, x - y = 1</code></li>
+                    <li>Functions: <code>sin(30)</code>, <code>cos(60)</code>, <code>tan(45)</code></li>
+                    <li>Inverse Trig: <code>asin(0.5)</code>, <code>acos(0.5)</code>, <code>atan(1)</code></li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>3. Algebra Solver (SymPy)</h4>
+                <ul>
+                    <li>Single Equations: <code>4x = 16</code> or <code>x^2 = 4</code></li>
+                    <li>Equation Systems: <code>2x + y = 5, x - y = 1</code></li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>4. Calculus (SymPy Engine)</h4>
+                <ul>
                     <li>Derivatives: <code>diff(x^3 + sin(x), x)</code></li>
-                    <li>Integrals: <code>integrate(x^2, x)</code></li>
+                    <li>Indefinite Integrals: <code>integrate(x^2, x)</code></li>
+                    <li>Definite Integrals: <code>integrate(x^3 + sin(x), (x, 0, 1))</code></li>
+                    <li>Limits: <code>limit(sin(x)/x, x, 0)</code></li>
+                    <li>Series Expansion: <code>series(exp(x), x, 0, 4)</code></li>
                 </ul>
             </div>
 
             <div class="guide-section">
-                <h4>3. Statistics & Matrices</h4>
+                <h4>5. Matrix Algebra</h4>
                 <ul>
-                    <li>Statistics: <code>mean(2, 4, 6, 8)</code> or <code>median(1, 3, 5)</code></li>
-                    <li>Determinants: <code>det([[7, 8], [9, 10]])</code></li>
+                    <li>Determinant: <code>det([[10, 11], [12, 13]])</code></li>
+                    <li>Inverse Matrix: <code>inv([[10, 11], [12, 13]])</code></li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h4>6. Statistics</h4>
+                <ul>
+                    <li>Mean / Average: <code>mean(2, 4, 6, 8)</code></li>
+                    <li>Median: <code>median(1, 3, 5, 7, 9)</code></li>
+                    <li>Standard Deviation: <code>stdev(2, 4, 4, 5, 7, 9)</code></li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT FOR BUTTON CLICK INTERACTIONS -->
+    <!-- JAVASCRIPT FOR MULTI-MODE KEYPAD INTERACTION -->
     <script>
         const inputField = document.getElementById('expression-input');
+
+        function switchMode(mode, btnElement) {
+            // Hide all keypads
+            const keypads = document.querySelectorAll('.keypad');
+            keypads.forEach(kp => kp.style.display = 'none');
+
+            // Deactivate all tab buttons
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected keypad & activate tab
+            document.getElementById('keypad-' + mode).style.display = 'grid';
+            btnElement.classList.add('active');
+        }
 
         function appendValue(val) {
             inputField.value += val;
