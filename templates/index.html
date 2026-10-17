@@ -11,7 +11,7 @@
            ------------------------------------------------------------- */
         * {
             box-sizing: border-box;
-            transition: all 0.2s ease-in-out;
+            transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
         }
 
         body {
@@ -239,7 +239,7 @@
         /* 3D Flip Card Effect */
         .flip-card {
             background-color: transparent;
-            height: 120px;
+            height: 125px;
             perspective: 1000px;
             cursor: pointer;
         }
@@ -264,7 +264,7 @@
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             border-radius: 16px;
-            padding: 15px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -274,7 +274,7 @@
         }
 
         .flip-card-front {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(30, 41, 59, 0.65);
             color: #60a5fa;
             font-weight: 700;
             font-size: 15px;
@@ -289,7 +289,7 @@
         }
 
         /* -------------------------------------------------------------
-           6. SECRET MATH MEMORY MATCH MINI-GAME MODAL
+           6. MODAL & MINI-GAME STYLES
            ------------------------------------------------------------- */
         .modal {
             display: none;
@@ -560,7 +560,7 @@
         {% endif %}
     </div>
 
-    <!-- 3D FLIP CARDS FOR QUICK TIPS -->
+    <!-- 3D FLIP CARDS FOR QUICK TIPS (6 EXPANDED CARDS) -->
     <div class="tips-container">
         <div class="tips-title">💡 Hover over cards to reveal secret calculator tips!</div>
         <div class="cards-grid">
@@ -580,6 +580,24 @@
                 <div class="flip-card-inner">
                     <div class="flip-card-front">📊 Fast Stats</div>
                     <div class="flip-card-back">Calculate <code>mean(2, 4, 6, 8)</code> or <code>stdev(1, 3, 5, 7)</code> instantly!</div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">🧱 Matrix Algebra</div>
+                    <div class="flip-card-back">Find determinants with <code>det([[1, 2],[3, 4]])</code> or inverses with <code>inv([...])</code>!</div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">🧩 Systems Solver</div>
+                    <div class="flip-card-back">Solve multi-variable systems with commas: <code>2x + y = 5, x - y = 1</code>!</div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">♾️ Limits & Series</div>
+                    <div class="flip-card-back">Evaluate limits with <code>limit(sin(x)/x, x, 0)</code> or series with <code>series(exp(x), x, 0, 4)</code>!</div>
                 </div>
             </div>
         </div>
@@ -651,12 +669,25 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: CANVAS PHYSICS, GAME & TABS -->
+    <!-- JAVASCRIPT: CANVAS REPULSION PHYSICS, FIXED GAME & TABS -->
     <script>
-        /* 1. INTERACTIVE FLOATING BALLS CANVAS PHYSICS */
+        /* -------------------------------------------------------------
+           1. INTERACTIVE MOUSE-REPULLED PARTICLES CANVAS
+           ------------------------------------------------------------- */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+        const mouse = { x: null, y: null, radius: 120 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -669,18 +700,42 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.radius = Math.random() * 25 + 10;
-                this.vx = (Math.random() - 0.5) * 1.2;
-                this.vy = (Math.random() - 0.5) * 1.2;
-                this.color = ['rgba(96, 165, 250, 0.25)', 'rgba(16, 185, 129, 0.25)', 'rgba(129, 140, 248, 0.25)'][Math.floor(Math.random() * 3)];
+                this.radius = Math.random() * 22 + 10;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.color = ['rgba(96, 165, 250, 0.3)', 'rgba(16, 185, 129, 0.3)', 'rgba(129, 140, 248, 0.3)'][Math.floor(Math.random() * 3)];
             }
 
             update() {
+                // Natural movement
                 this.x += this.vx;
                 this.y += this.vy;
 
+                // Bounce off canvas edges
                 if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                // Mouse Repulsion Physics
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxDistance = mouse.radius;
+                        let force = (maxDistance - distance) / maxDistance;
+                        let directionX = forceDirectionX * force * 8;
+                        let directionY = forceDirectionY * force * 8;
+
+                        // Push ball away from mouse cursor
+                        this.x -= directionX;
+                        this.y -= directionY;
+                    }
+                }
             }
 
             draw() {
@@ -691,7 +746,7 @@
             }
         }
 
-        for (let i = 0; i < 22; i++) {
+        for (let i = 0; i < 28; i++) {
             particles.push(new Particle());
         }
 
@@ -705,7 +760,9 @@
         }
         animateCanvas();
 
-        /* 2. MODE TABS & INPUT CONTROLS */
+        /* -------------------------------------------------------------
+           2. MODE TABS & INPUT CONTROLS
+           ------------------------------------------------------------- */
         const inputField = document.getElementById('expression-input');
 
         function switchMode(mode, btnElement) {
@@ -722,7 +779,9 @@
         function openGuide() { document.getElementById("guideModal").style.display = "block"; }
         function closeGuide() { document.getElementById("guideModal").style.display = "none"; }
 
-        /* 3. SECRET MATH MEMORY MATCH GAME SCRIPT */
+        /* -------------------------------------------------------------
+           3. FIXED MATH MEMORY MATCH MINI-GAME SCRIPT
+           ------------------------------------------------------------- */
         const gamePairs = [
             { q: "√16", a: "4" },
             { q: "∛27", a: "3" },
@@ -732,9 +791,9 @@
             { q: "mean(2,4)", a: "3" }
         ];
 
-        let cardsData = [];
         let flippedCards = [];
         let matchedCount = 0;
+        let lockBoard = false;
 
         function openGame() {
             document.getElementById("gameModal").style.display = "block";
@@ -750,6 +809,7 @@
             grid.innerHTML = "";
             flippedCards = [];
             matchedCount = 0;
+            lockBoard = false;
             document.getElementById("game-status").innerText = "Find all matching pairs!";
 
             // Flatten questions & answers into card deck and shuffle
@@ -760,27 +820,35 @@
             });
             deck.sort(() => Math.random() - 0.5);
 
-            deck.forEach((card, index) => {
+            deck.forEach((card) => {
                 const cardEl = document.createElement("div");
                 cardEl.classList.add("game-card");
                 cardEl.innerText = "❓";
-                cardEl.dataset.index = index;
-                cardEl.addEventListener("click", () => handleCardClick(cardEl, card));
+                cardEl.dataset.pairId = card.pairId;
+                cardEl.dataset.text = card.text;
+                cardEl.addEventListener("click", () => handleCardClick(cardEl));
                 grid.appendChild(cardEl);
             });
         }
 
-        function handleCardClick(cardEl, card) {
-            if (cardEl.classList.contains("flipped") || cardEl.classList.contains("matched") || flippedCards.length === 2) return;
+        function handleCardClick(cardEl) {
+            // Prevent clicks if board is locked or card is already flipped/matched
+            if (lockBoard) return;
+            if (cardEl.classList.contains("flipped") || cardEl.classList.contains("matched")) return;
 
-            cardEl.innerText = card.text;
+            // Flip current card
+            cardEl.innerText = cardEl.dataset.text;
             cardEl.classList.add("flipped");
-            flippedCards.push({ element: cardEl, data: card });
+            flippedCards.push(cardEl);
 
             if (flippedCards.length === 2) {
-                if (flippedCards.data.pairId === flippedCards[1].data.pairId) {
-                    flippedCards.element.classList.add("matched");
-                    flippedCards[1].element.classList.add("matched");
+                const card1 = flippedCards;
+                const card2 = flippedCards[1];
+
+                if (card1.dataset.pairId === card2.dataset.pairId) {
+                    // Match found!
+                    card1.classList.add("matched");
+                    card2.classList.add("matched");
                     flippedCards = [];
                     matchedCount++;
 
@@ -788,13 +856,16 @@
                         document.getElementById("game-status").innerText = "🎉 You Won! Calculator Master!";
                     }
                 } else {
+                    // Mismatch! Lock board temporarily, then flip cards back
+                    lockBoard = true;
                     setTimeout(() => {
-                        flippedCards.element.innerText = "❓";
-                        flippedCards[1].element.innerText = "❓";
-                        flippedCards.element.classList.remove("flipped");
-                        flippedCards[1].element.classList.remove("flipped");
+                        card1.innerText = "❓";
+                        card2.innerText = "❓";
+                        card1.classList.remove("flipped");
+                        card2.classList.remove("flipped");
                         flippedCards = [];
-                    }, 900);
+                        lockBoard = false; // Unlock board for next turn
+                    }, 800);
                 }
             }
         }
